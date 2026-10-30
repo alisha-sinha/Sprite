@@ -31,14 +31,8 @@ pipeline {
 
     post {
         always {
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'playwright-report',
-                reportFiles: 'index.html',
-                reportName: 'Playwright Test Report'
-            ])
+            // Archives the Playwright report folder so you can download it from the build page
+            archiveArtifacts artifacts: 'playwright-report/**/*', allowEmptyArchive: true
         }
     }
 }
