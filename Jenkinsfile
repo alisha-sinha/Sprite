@@ -10,23 +10,37 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                // Installs Node modules defined in package.json
                 bat 'npm install'
             }
         }
 
         stage('Install Playwright Browsers') {
             steps {
-                // Installs the required browser binaries for Playwright
                 bat 'npx playwright install'
             }
         }
 
         stage('Run Playwright Tests') {
             steps {
-                // Executes your automated test suite
-                bat 'npx playwright test'
+                // Allows the pipeline to continue even if tests fail so reports can generate
+                catchError(buildResult: 'FAILURE', societalResult: 'SUCCESS') {
+                    bat 'npx playwright test'
+                }
             }
+        }
+    }
+
+    post {
+        always {
+            // Publishes the Playwright HTML report to the Jenkins dashboard
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'playwright-report',
+                reportFiles: 'index.html',
+                reportName: 'Playwright Test Report'
+            ])
         }
     }
 }
