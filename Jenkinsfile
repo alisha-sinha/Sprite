@@ -22,8 +22,7 @@ pipeline {
 
         stage('Run Playwright Tests') {
             steps {
-                // Allows the pipeline to continue even if tests fail so reports can generate
-                catchError(buildResult: 'FAILURE', societalResult: 'SUCCESS') {
+                catchError(buildResult: 'FAILURE', stageResult: 'SUCCESS') {
                     bat 'npx playwright test'
                 }
             }
@@ -32,7 +31,6 @@ pipeline {
 
     post {
         always {
-            // Publishes the Playwright HTML report to the Jenkins dashboard
             publishHTML([
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
